@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from typing import Any
 
-from lexer.token import Token
+from Lexer.token import Token
 
 
 @dataclass
@@ -11,12 +10,12 @@ class Node:
 
 @dataclass
 class NodeLiteral(Node):
-    value = 0
+    pass
 
 
 @dataclass
 class NodeIdent(Node):
-    name: str
+    pass
 
 
 @dataclass
@@ -26,12 +25,10 @@ class NodeKeyword(Node):
 
 @dataclass
 class NodeBinOp(Node):
-    op: Any
     left: Node
     right: Node
 
 
 @dataclass
 class NodeUnaryOp(Node):
-    op: Any
     arg: Node
