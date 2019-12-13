@@ -27,3 +27,4 @@ class TokenType(Enum):
     VAR_NAME = 3
     VAR_VALUE = 4
     EXCEPTION = 5
+    EOF = 6

@@ -1,5 +1,6 @@
 from Interpreter.interpreter import Interpreter
 from Lexer.tokenizer import Tokenizer
+from Lexer.types import TokenType
 from Parser.parser import Parser
 
 
@@ -16,7 +17,7 @@ class Main:
 
     def print_tokens(self):
         tokenizer = Tokenizer(self.file)
-        while (token := tokenizer.next()).value != 'EOF':
+        while (token := tokenizer.next()).type != TokenType.EOF:
             print(token)
 
 

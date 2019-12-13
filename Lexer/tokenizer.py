@@ -207,4 +207,4 @@ class Tokenizer:
             if token := self.state_dict[self.active_state][self.symbol](self):
                 self.reset_state()
                 return token
-        return Token('EOF', TokenType.KEY_WORD, 0, 0)
+        return Token('EOF', TokenType.EOF, 0, 0)
