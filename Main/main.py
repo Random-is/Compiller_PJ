@@ -1,6 +1,7 @@
 from Interpreter.interpreter import Interpreter
 from Lexer.tokenizer import Tokenizer
 from Lexer.types import TokenType
+from Main.tree_printer import PrintNode
 from Parser.parser import Parser
 from Tester.tester import LexTester, ParsTester
 
@@ -14,16 +15,21 @@ def test_parser():
 
 
 class Main:
-    def __init__(self, path=None):
-        if path:
-            self.path = path
-            self.file = open(self.path)
+    def __init__(self, path):
+        self.path = path
+        self.file = open(self.path)
 
-    def print_ast(self):
+    def calculate(self):
         tokenizer = Tokenizer(file=self.file)
         parser = Parser(tokenizer)
         interpreter = Interpreter(parser)
         print(interpreter.interpret())
+
+    def print_ast(self):
+        tokenizer = Tokenizer(file=self.file)
+        parser = Parser(tokenizer)
+        tree = parser.parse()
+        print(PrintNode(tree=tree).get_tree())
 
     def print_tokens(self):
         tokenizer = Tokenizer(self.file)
@@ -32,6 +38,5 @@ class Main:
 
 
 if __name__ == '__main__':
-    test_parser()
-    # Main('../Tester/lex_tester/tests/file4.java').print_tokens()
-
+    # test_parser()
+    Main('../Tester/tests/lexer/file4.java').print_ast()
