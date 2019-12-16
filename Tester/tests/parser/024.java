@@ -1,0 +1,25 @@
+x == y
+x != y
+x < y
+x > y
+x <= y
+x >= y
+EOF
+1	1	VAR_NAME	x
+1	3	OPERATION	==
+1	6	VAR_NAME	y
+2	1	VAR_NAME	x
+2	3	OPERATION	!=
+2	6	VAR_NAME	y
+3	1	VAR_NAME	x
+3	3	OPERATION	<
+3	5	VAR_NAME	y
+4	1	VAR_NAME	x
+4	3	OPERATION	>
+4	5	VAR_NAME	y
+5	1	VAR_NAME	x
+5	3	OPERATION	<=
+5	6	VAR_NAME	y
+6	1	VAR_NAME	x
+6	3	OPERATION	>=
+6	6	VAR_NAME	y

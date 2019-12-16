@@ -28,3 +28,14 @@ class TokenType(Enum):
     VAR_VALUE = 4
     EXCEPTION = 5
     EOF = 6
+
+
+class OpType(Enum):
+    PLUS = '+'
+    MINUS = '-'
+    MUL = '*'
+    DIV = '/'
+
+
+class KeyWordType(Enum):
+    IF = 'if'

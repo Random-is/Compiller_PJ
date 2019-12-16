@@ -1,0 +1,17 @@
+x & y
+x && y
+x | y
+x || y
+EOF
+1	1	VAR_NAME	x
+1	3	OPERATION	&
+1	5	VAR_NAME	y
+2	1	VAR_NAME	x
+2	3	OPERATION	&&
+2	6	VAR_NAME	y
+3	1	VAR_NAME	x
+3	3	OPERATION	|
+3	5	VAR_NAME	y
+4	1	VAR_NAME	x
+4	3	OPERATION	||
+4	6	VAR_NAME	y

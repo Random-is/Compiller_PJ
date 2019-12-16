@@ -2,18 +2,29 @@ from Interpreter.interpreter import Interpreter
 from Lexer.tokenizer import Tokenizer
 from Lexer.types import TokenType
 from Parser.parser import Parser
+from Tester.lex_tester import LexTester
+from Tester.pars_tester import ParsTester
+
+
+def test_lexer():
+    LexTester().start_tests('../Tester/tests/lexer/', 10)
+
+
+def test_parser():
+    ParsTester().start_tests('../Tester/tests/parser/', 10)
 
 
 class Main:
-    def __init__(self, path):
-        self.path = path
-        self.file = open(self.path)
+    def __init__(self, path=None):
+        if path:
+            self.path = path
+            self.file = open(self.path)
 
     def print_ast(self):
-        tokenizer = Tokenizer(self.file)
+        tokenizer = Tokenizer(file=self.file)
         parser = Parser(tokenizer)
         interpreter = Interpreter(parser)
-        return interpreter.interpret()
+        print(interpreter.interpret())
 
     def print_tokens(self):
         tokenizer = Tokenizer(self.file)
@@ -22,5 +33,6 @@ class Main:
 
 
 if __name__ == '__main__':
-    # Main('../Testers/lex_tester/tests/file1.java').print_tokens()
-    print(Main('../Testers/lex_tester/tests/file4.java').print_ast())
+    test_parser()
+    # Main('../Tester/lex_tester/tests/file4.java').print_tokens()
+

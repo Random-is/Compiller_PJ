@@ -1,0 +1,4 @@
+()
+EOF
+1	1	SEPARATOR	(
+1	2	SEPARATOR	)

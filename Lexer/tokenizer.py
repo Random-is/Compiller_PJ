@@ -17,8 +17,9 @@ class Tokenizer:
                 'if', 'else',
                 'null', 'EOF')
 
-    def __init__(self, file):
-        self.file = file.read() + ' '
+    def __init__(self, file=None, text=None):
+        self.file = file.read() if file else text
+        self.file += '\n'
         self.file_len = len(self.file)
         self.generate_dict()
 

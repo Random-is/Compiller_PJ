@@ -1,5 +1,5 @@
-from Lexer.types import TokenType
-from Parser.ast import NodeLiteral, NodeBinOp
+from Lexer.types import TokenType, OpType
+from Parser.ast import NodeLiteral, NodeBinOp, NodeUnaryOp
 
 """
     expr   : term ((PLUS | MINUS) term)*
@@ -14,21 +14,23 @@ class Parser:
 
     def expr(self):
         node = self.term()
-        while (token := self.tokenizer.next()).value in ("+", "-"):
+        while (token := self.tokenizer.next()).value in (OpType.PLUS.value, OpType.MINUS.value):
             node = NodeBinOp(token, left=node, right=self.term())
         self.tokenizer.back_token(token)
         return node
 
     def term(self):
         node = self.factor()
-        while (token := self.tokenizer.next()).value in ("*", "/"):
+        while (token := self.tokenizer.next()).value in (OpType.MUL.value, OpType.DIV.value):
             node = NodeBinOp(token, left=node, right=self.factor())
         self.tokenizer.back_token(token)
         return node
 
     def factor(self):
         token = self.tokenizer.next()
-        if token.type == TokenType.VAR_VALUE:
+        if token.value == "-":
+            return NodeUnaryOp(token, arg=self.term())
+        elif token.type == TokenType.VAR_VALUE:
             return NodeLiteral(token)
         elif token.value == "(":
             node = self.expr()
