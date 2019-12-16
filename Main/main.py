@@ -2,8 +2,7 @@ from Interpreter.interpreter import Interpreter
 from Lexer.tokenizer import Tokenizer
 from Lexer.types import TokenType
 from Parser.parser import Parser
-from Tester.lex_tester import LexTester
-from Tester.pars_tester import ParsTester
+from Tester.tester import LexTester, ParsTester
 
 
 def test_lexer():
