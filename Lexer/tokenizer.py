@@ -1,6 +1,7 @@
 from Lexer.table import table_str
-from Lexer.types import StateType, TokenType
+from Lexer.types import StateType, TokenType, KeyWordType, SepType, OpType, BoolType
 from Lexer.token import Token
+from Main.error import LexerError, ErrorType
 
 
 class Tokenizer:
@@ -10,17 +11,12 @@ class Tokenizer:
     last_token = None
     pointer, line, last_nl = 0, 1, 0
     active_state = StateType.START
-    keywords = ('import', 'class', 'public', 'static',
-                'void', 'String', 'int', 'double', 'char', 'boolean',
-                'return', 'break',
-                'new', 'this',
-                'if', 'else',
-                'null', 'EOF')
+    keywords = tuple(x.value for x in KeyWordType)
+    booleans = tuple(x.value for x in BoolType)
 
-    def __init__(self, file=None, text=None):
-        self.file = file.read() if file else text
-        self.file += '\n'
-        self.file_len = len(self.file)
+    def __init__(self, text: str):
+        self.text = text + '\n'
+        self.file_len = len(self.text)
         self.generate_dict()
 
     def generate_dict(self):
@@ -48,6 +44,17 @@ class Tokenizer:
         self.temp += self.symbol
         return None
 
+    def get_pos(self):
+        return self.pointer - self.last_nl - len(self.temp) + 1
+
+    def check_word(self):
+        if self.temp in self.booleans:
+            return Token(BoolType(self.temp), self.temp, TokenType.KEY_WORD, self.line, self.get_pos())
+        elif self.temp in self.keywords:
+            return Token(KeyWordType(self.temp), self.temp, TokenType.KEY_WORD, self.line, self.get_pos())
+        else:
+            return Token(self.temp, self.temp, TokenType.IDENT, self.line, self.get_pos())
+
     def nt(self):
         return None
 
@@ -56,45 +63,56 @@ class Tokenizer:
     # region Get Tokens
     def g_t_sep(self):
         self.temp += self.symbol
-        return Token(self.temp, TokenType.SEPARATOR, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return Token(SepType(self.temp), self.temp, TokenType.SEPARATOR, self.line, self.get_pos())
 
     def g_t_sep_b(self):
         self.pointer_back()
-        return Token(self.temp, TokenType.SEPARATOR, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return Token(SepType(self.temp), self.temp, TokenType.SEPARATOR, self.line, self.get_pos())
 
     def g_t_op(self):
         self.temp += self.symbol
-        return Token(self.temp, TokenType.OPERATION, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return Token(OpType(self.temp), self.temp, TokenType.OPERATION, self.line, self.get_pos())
 
     def g_t_op_b(self):
         self.pointer_back()
-        return Token(self.temp, TokenType.OPERATION, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return Token(OpType(self.temp), self.temp, TokenType.OPERATION, self.line, self.get_pos())
 
-    def g_t_vv(self):
+    def g_t_int(self):
         self.temp += self.symbol
-        return Token(self.temp, TokenType.VAR_VALUE, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return Token(int(self.temp), self.temp, TokenType.INT, self.line, self.get_pos())
 
-    def g_t_vv_b(self):
+    def g_t_int_b(self):
         self.pointer_back()
-        return Token(self.temp, TokenType.VAR_VALUE, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return Token(int(self.temp), self.temp, TokenType.INT, self.line, self.get_pos())
+
+    def g_t_dbl(self):
+        self.temp += self.symbol
+        return Token(float(self.temp), self.temp, TokenType.DOUBLE, self.line, self.get_pos())
+
+    def g_t_dbl_b(self):
+        self.pointer_back()
+        return Token(float(self.temp), self.temp, TokenType.DOUBLE, self.line, self.get_pos())
+
+    def g_t_char(self):
+        self.temp += self.symbol
+        return Token(self.temp[1:-1], self.temp, TokenType.CHAR, self.line, self.get_pos())
+
+    def g_t_str(self):
+        self.temp += self.symbol
+        return Token(self.temp[1:-1], self.temp, TokenType.STRING, self.line, self.get_pos())
 
     def g_t_word(self):
         self.temp += self.symbol
-        if self.temp in self.keywords:
-            return Token(self.temp, TokenType.KEY_WORD, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
-        else:
-            return Token(self.temp, TokenType.VAR_NAME, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return self.check_word()
 
     def g_t_word_b(self):
         self.pointer_back()
-        if self.temp in self.keywords:
-            return Token(self.temp, TokenType.KEY_WORD, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
-        else:
-            return Token(self.temp, TokenType.VAR_NAME, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        return self.check_word()
 
     def err(self):
         self.temp += self.symbol
-        return Token(self.temp, TokenType.EXCEPTION, self.line, self.pointer - self.last_nl - len(self.temp) + 1)
+        token = Token(self.temp, self.temp, TokenType.EXCEPTION, self.line, self.get_pos())
+        raise LexerError(ErrorType.UNEXPECTED_TOKEN.value, token)
 
     # endregion
 
@@ -114,8 +132,13 @@ class Tokenizer:
         self.temp += self.symbol
         return None
 
-    def r_slash_s(self):
-        self.active_state = StateType.R_SLASH
+    def r_s_char_s(self):
+        self.active_state = StateType.R_SLASH_CHAR
+        self.temp += self.symbol
+        return None
+
+    def r_s_str_s(self):
+        self.active_state = StateType.R_SLASH_STR
         self.temp += self.symbol
         return None
 
@@ -131,6 +154,16 @@ class Tokenizer:
 
     def string_s(self):
         self.active_state = StateType.STRING
+        self.temp += self.symbol
+        return None
+
+    def char_s(self):
+        self.active_state = StateType.CHAR
+        self.temp += self.symbol
+        return None
+
+    def e_char_s(self):
+        self.active_state = StateType.END_CHAR
         self.temp += self.symbol
         return None
 
@@ -177,35 +210,42 @@ class Tokenizer:
     # endregion
 
     # region Other
-    def end_string(self):
-        # self.pointer += 1
-        # return self.g_t_word_b()
-        return self.g_t_vv()
-
-    def end_r_slash(self):
+    def end_r_s_str(self):
         self.active_state = StateType.STRING
         self.temp += self.symbol
         return None
 
+    def end_r_s_char(self):
+        self.active_state = StateType.END_CHAR
+        self.temp += self.symbol
+        return None
+
     def end_comment(self):
-        return self.g_t_word_b()
+        self.pointer_back()
+        self.reset_state()
+        return None
 
     # endregion
 
     state_table = eval(table_str)
 
-    def back_token(self, token):
+    def back_token(self, token: Token):
         self.last_token = token
 
     def next(self):
-        if self.last_token:
+        if self.last_token is not None:
             token = self.last_token
             self.last_token = None
             return token
         while self.pointer < self.file_len:
-            self.symbol = self.file[self.pointer]
+            self.symbol = self.text[self.pointer]
             self.pointer += 1
-            if token := self.state_dict[self.active_state][self.symbol](self):
+            if (token := self.state_dict[self.active_state][self.symbol](self)) is not None:
                 self.reset_state()
                 return token
-        return Token('EOF', TokenType.EOF, 0, 0)
+        return Token('', '', TokenType.EOF, 0, 0)
+
+    def next_back(self):
+        token = self.next()
+        self.back_token(token)
+        return token

@@ -20,6 +20,10 @@ class Interpreter:
             elif node.token.value == "/":
                 return self.visit(node.left) / self.visit(node.right)
 
+    def calc(self):
+        tree = self.parser.expr()
+        return self.visit(tree)
+
     def interpret(self):
         tree = self.parser.parse()
         return self.visit(tree)

@@ -4,7 +4,7 @@ import pandas
 def generate_table(excel_path):
     excel = pandas.read_excel(excel_path)
     state_table = []
-    for i in range(16):
+    for i in range(19):
         row = []
         for j in range(1, 98):
             row.append(excel.iat[i, j])

@@ -45,3 +45,11 @@ class ParsTester(Tester):
         parser = Parser(tokenizer)
         interpreter = Interpreter(parser)
         return str(interpreter.interpret())
+
+
+class ExprTester(Tester):
+    def get_result(self, test):
+        tokenizer = Tokenizer(text=test)
+        parser = Parser(tokenizer)
+        interpreter = Interpreter(parser)
+        return str(interpreter.calc())

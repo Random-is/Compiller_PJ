@@ -32,3 +32,8 @@ class NodeBinOp(Node):
 @dataclass
 class NodeUnaryOp(Node):
     arg: Node
+
+
+@dataclass
+class NodeBlock(Node):
+    children: []
