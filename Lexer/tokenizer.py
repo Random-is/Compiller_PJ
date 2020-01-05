@@ -8,7 +8,7 @@ class Tokenizer:
     temp = ''
     symbol = ''
     state_dict = {}
-    last_token = None
+    last_tokens = []
     pointer, line, last_nl = 0, 1, 0
     active_state = StateType.START
     keywords = tuple(x.value for x in KeyWordType)
@@ -230,13 +230,11 @@ class Tokenizer:
     state_table = eval(table_str)
 
     def back_token(self, token: Token):
-        self.last_token = token
+        self.last_tokens.append(token)
 
     def next(self):
-        if self.last_token is not None:
-            token = self.last_token
-            self.last_token = None
-            return token
+        if self.last_tokens:
+            return self.last_tokens.pop()
         while self.pointer < self.file_len:
             self.symbol = self.text[self.pointer]
             self.pointer += 1

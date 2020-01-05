@@ -24,20 +24,21 @@ class StateType(Enum):
 
 
 class TokenType(Enum):
-    SEPARATOR = auto()
-    OPERATION = auto()
-    KEY_WORD = auto()
-    IDENT = auto()
-    INT = auto()
-    DOUBLE = auto()
-    BOOLEAN = auto()
-    CHAR = auto()
-    STRING = auto()
-    EXCEPTION = auto()
-    EOF = auto()
+    SEPARATOR = 'Separator'
+    OPERATION = 'Operation'
+    KEY_WORD = 'KeyWord'
+    IDENT = 'Identifier'
+    INT = 'Integer'
+    DOUBLE = 'Double'
+    BOOLEAN = 'Boolean'
+    CHAR = 'Char'
+    STRING = 'String'
+    EXCEPTION = 'Exception'
+    EOF = 'EOF'
 
 
 class OpType(Enum):
+    ASSIGN = '='
     PLUS = '+'
     MINUS = '-'
     MUL = '*'
@@ -57,8 +58,8 @@ class SepType(Enum):
 
 
 class BoolType(Enum):
-    TRUE = 'True'
-    FALSE = 'False'
+    TRUE = 'true'
+    FALSE = 'false'
 
 
 class KeyWordType(Enum):

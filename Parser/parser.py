@@ -1,5 +1,6 @@
 from Lexer.token import Token
-from Lexer.types import TokenType, OpType
+from Lexer.types import TokenType, OpType, KeyWordType
+from Main.error import ErrorType, ParserError
 from Parser.ast import NodeLiteral, NodeBinOp, NodeUnaryOp, NodeBlock, NodeIdent
 
 """
@@ -13,12 +14,8 @@ class Parser:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
 
-    def error(self, token, text):
-        raise Exception('Syntax error at {0}:{1} {2} {3}\n\t{4}'.format(token.line,
-                                                                        token.number,
-                                                                        token.type.name,
-                                                                        token.value,
-                                                                        text))
+    def error(self, text, token):
+        raise ParserError(text, token)
 
     def req_next(self, text, req_type, req_value=None):
         req_values = []
@@ -29,15 +26,17 @@ class Parser:
                 req_values.append(req_value)
         token = self.tokenizer.next()
         if token.type != req_type:
-            self.error(token, text)
+            self.error(text, token)
         elif req_value is not None and token.value not in req_values:
-            self.error(token, text)
+            self.error(text, token)
         else:
             return token
 
     def program(self):
         """program : compound_statement DOT"""
-        self.req_next('private/public required', TokenType.KEY_WORD, ['public', 'private'])
+        self.req_next(ErrorType.EXPECTED.info(f'{KeyWordType.PUBLIC.value}/{KeyWordType.PRIVATE.value}'),
+                      TokenType.KEY_WORD,
+                      [KeyWordType.PUBLIC, KeyWordType.PRIVATE])
         self.req_next('class required', TokenType.KEY_WORD, 'class')
         return NodeUnaryOp(self.req_next('Class NAME required', TokenType.IDENT), self.compound_statement())
 

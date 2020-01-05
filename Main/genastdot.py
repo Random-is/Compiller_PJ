@@ -1,58 +1,52 @@
+from enum import Enum
+
 from graphviz import Source
 
-from Parser.ast import NodeLiteral, NodeUnaryOp, NodeBinOp, NodeBlock, NodeIdent
+from Parser.ast import Node
 
 
 class AstVizGen:
     def __init__(self, tree):
         self.tree = tree
         self.ncount = 1
-        self.dot_header = ['digraph astgraph {',
-                           '    node [shape=circle, fontsize=12, fontname="Courier", height=.1];',
-                           '    ranksep=.3;',
-                           '    edge [arrowsize=.5]']
+        self.pref = ' ' * 2
+        self.dot_header = ['digraph astgraph {\n',
+                           '  node [shape=circle, fontsize=12, fontname="Courier", height=.1];\n',
+                           '  ranksep=.3;\n',
+                           '  edge [arrowsize=.5]\n']
         self.dot_body = []
         self.dot_footer = ['}']
 
-    def visit(self, node):
-        if isinstance(node, NodeLiteral) or isinstance(node, NodeIdent):
-            s = '  node{} [label="{}"]\n'.format(self.ncount, node.token.value)
-            self.dot_body.append(s)
-            node._num = self.ncount
-            self.ncount += 1
-        elif isinstance(node, NodeUnaryOp):
-            s = '  node{} [label="{}"]\n'.format(self.ncount, node.token.value)
-            self.dot_body.append(s)
-            node._num = self.ncount
-            self.ncount += 1
-            self.visit(node.arg)
-            s = '  node{} -> node{}\n'.format(node._num, node.arg._num)
-            self.dot_body.append(s)
-        elif isinstance(node, NodeBlock):
-            s = '  node{} [label="block"]\n'.format(self.ncount)
-            self.dot_body.append(s)
-            node._num = self.ncount
-            self.ncount += 1
-            for child in node.children:
-                self.visit(child)
-                s = '  node{} -> node{}\n'.format(node._num, child._num)
-                self.dot_body.append(s)
-        elif isinstance(node, NodeBinOp):
-            s = '  node{} [label="{}"]\n'.format(self.ncount, node.token.value)
-            self.dot_body.append(s)
-            node._num = self.ncount
-            self.ncount += 1
-            self.visit(node.left)
-            s = '  node{} -> node{}\n'.format(node._num, node.left._num)
-            self.dot_body.append(s)
-            self.visit(node.right)
-            s = '  node{} -> node{}\n'.format(node._num, node.right._num)
-            self.dot_body.append(s)
-        else:
-            print('NOT FOUND')
+    def visit_(self, node):
+        s = ''
+        variables = node.__dict__
+        if isinstance(node, Enum):
+            name = node.__class__.__name__
+            s = self.pref + f'node{self.ncount} [label="{name[name.index(".") + 1:]}"]\n'
+        elif 'token' in variables:
+            s = self.pref + f'node{self.ncount} [label="{node.token.raw_value}"]\n'
+        elif issubclass(node.__class__, Node):
+            name = node.__class__.__name__
+            s = self.pref + f'node{self.ncount} [label="{name[4:]}"]\n'
+        self.dot_body.append(s)
+        node._num = self.ncount
+        self.ncount += 1
+        for key, value in variables.items():
+            if key not in ['token', '_num']:
+                if isinstance(value, list):
+                    for x in value:
+                        self.visit_(x)
+                        s = '  node{} -> node{}\n'.format(node._num, x._num)
+                        self.dot_body.append(s)
+                else:
+                    self.visit_(value)
+                    s = '  node{} -> node{}\n'.format(node._num, value._num)
+                    self.dot_body.append(s)
 
-    def gendot(self):
-        self.visit(self.tree)
+    def generate(self):
+        self.visit_(self.tree)
         content = ''.join(self.dot_header + self.dot_body + self.dot_footer)
+        # print(content)
         dot = Source(content, 'ast', format='png')
-        dot.view(cleanup=True)
+        # dot.view(cleanup=True)
+        dot.render(cleanup=True)

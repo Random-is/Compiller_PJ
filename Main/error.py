@@ -1,16 +1,20 @@
 from enum import Enum
 
 from Lexer.token import Token
+from Lexer.types import TokenType
 
 
 class ErrorType(Enum):
     UNEXPECTED_TOKEN = 'Unexpected token'
     ID_NOT_FOUND = 'Identifier not found'
     DUPLICATE_ID = 'variable is already defined'
-    EXPECTED = '"{}" expected'
+    EXPECTED = '{} expected'
 
     def info(self, info) -> str:
-        return self.value.format(info.value)
+        is_token_type = isinstance(info[0], TokenType)
+        info = [x.value for x in info] if isinstance(info, list) else [info.value]
+        info = '/'.join(info) + (' ' + ('types' if len(info) > 1 else 'type') if is_token_type else '')
+        return self.value.format(info)
 
 
 class Error(Exception):

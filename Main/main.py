@@ -1,8 +1,8 @@
 from Interpreter.interpreter import Interpreter
 from Lexer.tokenizer import Tokenizer
-from Lexer.types import TokenType
+from Lexer.types import TokenType, KeyWordType
 from Main.genastdot import AstVizGen
-from Parser.parser import Parser
+from Parser.parser_ import Parser
 from Tester.tester import LexTester, ParsTester, ExprTester
 
 
@@ -29,7 +29,7 @@ class Main:
         tokenizer = Tokenizer(self.file)
         parser = Parser(tokenizer)
         tree = parser.parse()
-        AstVizGen(tree).gendot()
+        AstVizGen(tree).generate()
 
     def print_tokens(self):
         tokenizer = Tokenizer(self.file)
@@ -39,4 +39,4 @@ class Main:
 
 if __name__ == '__main__':
     # test_expr()
-    Main('test.java').print_tokens()
+    Main('test.java').print_ast()
