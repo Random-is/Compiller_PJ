@@ -45,45 +45,41 @@ class NodeBlock(Node):
 
 
 @dataclass
-class NodePack(NodeBlock):
-    pass
-
-
-@dataclass
-class NodeImport(NodeBlock):
-    pass
-
-
-@dataclass
-class NodeModifier(NodeBlock):
-    pass
-
-
-@dataclass
 class NodeMod(NodeBlock):
     pass
 
 
 @dataclass
-class NodeCompUnit(Node):
-    package_node: NodePack
-    import_node: Node
-    type_node: Node
-
-
-@dataclass
 class NodeClass(Node):
-    modifiers: NodeMod
     name: NodeIdent
     fields: Node
 
 
 @dataclass
+class NodeCompUnit(Node):
+    type_node: NodeClass
+
+
+@dataclass
 class NodeVar(Node):
-    modifiers: NodeMod
     type: Node
     name: NodeIdent
     value: Node
+
+
+@dataclass
+class NodeMethod(Node):
+    type: Node
+    name: NodeIdent
+    params: NodeBlock
+    statements: NodeBlock
+
+
+@dataclass
+class NodeConstr(Node):
+    name: NodeIdent
+    params: NodeBlock
+    statements: NodeBlock
 
 
 @dataclass

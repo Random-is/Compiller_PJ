@@ -9,11 +9,12 @@ class ErrorType(Enum):
     ID_NOT_FOUND = 'Identifier not found'
     DUPLICATE_ID = 'variable is already defined'
     EXPECTED = '{} expected'
+    VAR_TYPE_EX = EXPECTED.format('Variable Type')
 
-    def info(self, info) -> str:
-        is_token_type = isinstance(info[0], TokenType)
-        info = [x.value for x in info] if isinstance(info, list) else [info.value]
-        info = '/'.join(info) + (' ' + ('types' if len(info) > 1 else 'type') if is_token_type else '')
+    def info(self, *info: Enum) -> str:
+        is_token_type = False if [x for x in info if not isinstance(x, TokenType)] else True
+        info = [x.value for x in info]
+        info = '"' + '" / "'.join(info) + '"' + (' ' + ('types' if len(info) > 1 else 'type') if is_token_type else '')
         return self.value.format(info)
 
 

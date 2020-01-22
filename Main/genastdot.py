@@ -36,11 +36,11 @@ class AstVizGen:
                 if isinstance(value, list):
                     for x in value:
                         self.visit_(x)
-                        s = '  node{} -> node{}\n'.format(node._num, x._num)
+                        s = self.pref + f'node{node._num} -> node{x._num}[label={key}]\n'
                         self.dot_body.append(s)
                 else:
                     self.visit_(value)
-                    s = '  node{} -> node{}\n'.format(node._num, value._num)
+                    s = self.pref + f'node{node._num} -> node{value._num}[label={key}]\n'
                     self.dot_body.append(s)
 
     def generate(self):
@@ -48,5 +48,5 @@ class AstVizGen:
         content = ''.join(self.dot_header + self.dot_body + self.dot_footer)
         # print(content)
         dot = Source(content, 'ast', format='png')
-        # dot.view(cleanup=True)
-        dot.render(cleanup=True)
+        dot.view(cleanup=True)
+        # dot.render(cleanup=True)

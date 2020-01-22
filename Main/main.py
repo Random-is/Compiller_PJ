@@ -2,22 +2,22 @@ from Interpreter.interpreter import Interpreter
 from Lexer.tokenizer import Tokenizer
 from Lexer.types import TokenType, KeyWordType
 from Main.genastdot import AstVizGen
-from Parser.parser_ import Parser
+from Parser.parser import Parser
 from Tester.tester import LexTester, ParsTester, ExprTester
-
-
-def test_lexer():
-    LexTester().start_tests('../Tester/tests/lexer/', 10)
-
-
-def test_expr():
-    ExprTester().start_tests('../Tester/tests/expr/', 10)
 
 
 class Main:
     def __init__(self, path):
         self.path = path
         self.file = open(self.path).read()
+
+    @staticmethod
+    def test_lexer():
+        LexTester().start_tests('../Tester/tests/lexer/', 10)
+
+    @staticmethod
+    def test_expr():
+        ExprTester().start_tests('../Tester/tests/expr/', 10)
 
     def calculate(self):
         tokenizer = Tokenizer(self.file)

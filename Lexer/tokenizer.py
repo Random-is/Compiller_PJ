@@ -5,27 +5,32 @@ from Main.error import LexerError, ErrorType
 
 
 class Tokenizer:
-    temp = ''
-    symbol = ''
-    state_dict = {}
-    last_tokens = []
-    pointer, line, last_nl = 0, 1, 0
-    active_state = StateType.START
-    keywords = tuple(x.value for x in KeyWordType)
-    booleans = tuple(x.value for x in BoolType)
 
     def __init__(self, text: str):
         self.text = text + '\n'
         self.file_len = len(self.text)
-        self.generate_dict()
+        self.last_tokens = []
+        self.temp = self.symbol = ''
+        self.active_state = StateType.START
+        self.pointer, self.line, self.last_nl = 0, 1, 0
+        self.state_dict = self.generate_dict(eval(table_str))
+        self.booleans = tuple(x.value for x in BoolType)
+        self.keywords = tuple(x.value for x in KeyWordType)
 
-    def generate_dict(self):
+    @staticmethod
+    def generate_dict(state_table):
+        result = {}
         symbols = [chr(9), chr(10)] + [chr(i) for i in range(32, 127)]
         for i, state in enumerate((state for state in StateType)):
             for j, symbol in enumerate(symbols):
-                self.state_dict.setdefault(state, {})[symbol] = self.state_table[i][j]
+                result.setdefault(state, {})[symbol] = state_table[i][j]
+        return result
 
     # region Utility
+    @staticmethod
+    def nt():
+        return None
+
     def new_line(self):
         self.last_nl = self.pointer
         self.line += 1
@@ -55,9 +60,6 @@ class Tokenizer:
         else:
             return Token(self.temp, self.temp, TokenType.IDENT, self.line, self.get_pos())
 
-    def nt(self):
-        return None
-
     # endregion
 
     # region Get Tokens
@@ -76,10 +78,6 @@ class Tokenizer:
     def g_t_op_b(self):
         self.pointer_back()
         return Token(OpType(self.temp), self.temp, TokenType.OPERATION, self.line, self.get_pos())
-
-    def g_t_int(self):
-        self.temp += self.symbol
-        return Token(int(self.temp), self.temp, TokenType.INT, self.line, self.get_pos())
 
     def g_t_int_b(self):
         self.pointer_back()
@@ -100,10 +98,6 @@ class Tokenizer:
     def g_t_str(self):
         self.temp += self.symbol
         return Token(self.temp[1:-1], self.temp, TokenType.STRING, self.line, self.get_pos())
-
-    def g_t_word(self):
-        self.temp += self.symbol
-        return self.check_word()
 
     def g_t_word_b(self):
         self.pointer_back()
@@ -149,7 +143,7 @@ class Tokenizer:
 
     def comment_s(self):
         self.active_state = StateType.COMMENT
-        self.temp = '//'
+        self.temp += self.symbol
         return None
 
     def string_s(self):
@@ -227,10 +221,14 @@ class Tokenizer:
 
     # endregion
 
-    state_table = eval(table_str)
+    def back_token(self, *token: Token):
+        for t in token:
+            self.last_tokens.append(t)
 
-    def back_token(self, token: Token):
-        self.last_tokens.append(token)
+    def next_back(self):
+        token = self.next()
+        self.back_token(token)
+        return token
 
     def next(self):
         if self.last_tokens:
@@ -238,12 +236,7 @@ class Tokenizer:
         while self.pointer < self.file_len:
             self.symbol = self.text[self.pointer]
             self.pointer += 1
-            if (token := self.state_dict[self.active_state][self.symbol](self)) is not None:
+            if (token := self.state_dict[self.active_state][self.symbol]()) is not None:
                 self.reset_state()
                 return token
         return Token('', '', TokenType.EOF, 0, 0)
-
-    def next_back(self):
-        token = self.next()
-        self.back_token(token)
-        return token
