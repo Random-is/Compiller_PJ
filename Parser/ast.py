@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+from typing import Any
 
 from Lexer.token import Token
+from Parser.type import Type
 
 
 @dataclass
@@ -41,7 +43,7 @@ class NodeUnaryOp(NodeWithToken):
 
 @dataclass
 class NodeBlock(Node):
-    children: []
+    children: list
 
 
 @dataclass
@@ -57,28 +59,76 @@ class NodeClass(Node):
 
 @dataclass
 class NodeCompUnit(Node):
-    type_node: NodeClass
+    class_: NodeClass
 
 
 @dataclass
 class NodeVar(Node):
-    type: Node
+    type_: Type
     name: NodeIdent
     value: Node
 
 
 @dataclass
 class NodeMethod(Node):
-    type: Node
+    type_: Type
     name: NodeIdent
     params: NodeBlock
     statements: NodeBlock
 
 
 @dataclass
+class NodeMCall(Node):
+    name: NodeIdent
+    arguments: NodeBlock
+
+
+@dataclass
 class NodeConstr(Node):
     name: NodeIdent
     params: NodeBlock
+    statements: NodeBlock
+
+
+@dataclass
+class NodeAssign(NodeWithToken):
+    var_name: NodeIdent
+    expr: Node
+
+
+@dataclass
+class NodeNewArr(NodeWithToken):
+    type_: Type
+    lengths: NodeBlock
+
+
+@dataclass
+class NodeArrInit(NodeBlock):
+    pass
+
+
+@dataclass
+class NodeArrItem(NodeWithToken):
+    indexes: NodeBlock
+
+
+@dataclass
+class NodeReturn(NodeWithToken):
+    expr: Node
+
+
+@dataclass
+class NodeIf(NodeWithToken):
+    expr: NodeWithToken
+    statements: NodeBlock
+    else_statements: NodeBlock
+
+
+@dataclass
+class NodeFor(NodeWithToken):
+    for_init: Node
+    expr: NodeWithToken
+    for_update: Node
     statements: NodeBlock
 
 

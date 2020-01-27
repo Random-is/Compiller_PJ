@@ -1,3 +1,3 @@
 {
 EOF
-1	1	SEPARATOR	{
+1	1	SEPARATOR	{	SepType.L_CURLY

@@ -1,3 +1,3 @@
 01
 EOF
-1	1	EXCEPTION	01
+LexerError: Unexpected token -> 1	1	EXCEPTION	01	01

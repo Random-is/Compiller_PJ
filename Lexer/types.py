@@ -43,6 +43,18 @@ class OpType(Enum):
     MINUS = '-'
     MUL = '*'
     DIV = '/'
+    OR = '||'
+    OR_ONE = '|'
+    AND = '&&'
+    AND_ONE = '&'
+    EQUALS = '=='
+    NOT = '!'
+    MOD = '%'
+    NOT_EQUALS = '!='
+    MORE = '>'
+    MORE_EQUALS = '>='
+    LESS = '<'
+    LESS_EQUALS = '<='
 
 
 class SepType(Enum):
@@ -100,6 +112,7 @@ class KeyWordType(Enum):
     PUBLIC = 'public'
     RETURN = 'return'
     SHORT = 'short'
+    STRING = 'String'
     STATIC = 'static'
     STRICTFP = 'strictfp'
     SUPER = 'super'

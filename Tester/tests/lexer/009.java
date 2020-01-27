@@ -1,3 +1,3 @@
 Abc
 EOF
-1	1	VAR_NAME	Abc
+1	1	IDENT	Abc	Abc

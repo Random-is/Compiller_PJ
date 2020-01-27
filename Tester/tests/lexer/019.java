@@ -1,3 +1,3 @@
 "abcd"
 EOF
-1	1	VAR_VALUE	"abcd"
+1	1	STRING	"abcd"	abcd

@@ -1,3 +1,3 @@
 a
 EOF
-1	1	VAR_NAME	a
+1	1	IDENT	a	a

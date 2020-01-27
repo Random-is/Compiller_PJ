@@ -7,14 +7,15 @@ from Lexer.types import TokenType
 class ErrorType(Enum):
     UNEXPECTED_TOKEN = 'Unexpected token'
     ID_NOT_FOUND = 'Identifier not found'
-    DUPLICATE_ID = 'variable is already defined'
+    DUPLICATE_ID = 'Variable is already defined in the Scope'
+    NOT_STATEMENT = 'Not a statement'
     EXPECTED = '{} expected'
     VAR_TYPE_EX = EXPECTED.format('Variable Type')
 
     def info(self, *info: Enum) -> str:
         is_token_type = False if [x for x in info if not isinstance(x, TokenType)] else True
         info = [x.value for x in info]
-        info = '"' + '" / "'.join(info) + '"' + (' ' + ('types' if len(info) > 1 else 'type') if is_token_type else '')
+        info = '"' + '" / "'.join(info) + '"' + (' ' + ('types' if len(info) > 1 else 'return_type') if is_token_type else '')
         return self.value.format(info)
 
 

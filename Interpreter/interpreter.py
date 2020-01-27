@@ -9,7 +9,7 @@ class Interpreter:
         if isinstance(node, NodeLiteral):
             return eval(node.token.value)
         elif isinstance(node, NodeUnaryOp):
-            return -self.visit(node.arg)
+            return self.visit(node.arg)
         elif isinstance(node, NodeBinOp):
             if node.token.value == "+":
                 return self.visit(node.left) + self.visit(node.right)

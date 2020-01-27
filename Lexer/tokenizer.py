@@ -54,7 +54,7 @@ class Tokenizer:
 
     def check_word(self):
         if self.temp in self.booleans:
-            return Token(BoolType(self.temp), self.temp, TokenType.KEY_WORD, self.line, self.get_pos())
+            return Token(BoolType(self.temp), self.temp, TokenType.BOOLEAN, self.line, self.get_pos())
         elif self.temp in self.keywords:
             return Token(KeyWordType(self.temp), self.temp, TokenType.KEY_WORD, self.line, self.get_pos())
         else:
@@ -85,6 +85,8 @@ class Tokenizer:
 
     def g_t_dbl(self):
         self.temp += self.symbol
+        if self.temp[-1] == 'f':
+            return Token(float(self.temp[:-1]), self.temp, TokenType.DOUBLE, self.line, self.get_pos())
         return Token(float(self.temp), self.temp, TokenType.DOUBLE, self.line, self.get_pos())
 
     def g_t_dbl_b(self):

@@ -1,3 +1,3 @@
 0
 EOF
-1	1	VAR_VALUE	0
+1	1	INT	0	0

@@ -1,3 +1,3 @@
 0f
 EOF
-1	1	VAR_VALUE	0f
+1	1	DOUBLE	0f	0.0

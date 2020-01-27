@@ -1,11 +1,10 @@
 class Main {
-    int x;
-    double x[];
-    String test;
-
-    void sum(int x, Type y[]) {
+    void method() {
     }
-
-    Main(int mas[]){
+    boolean method2(int a, String s) {
+        if (a == s) {
+            return true;
+        }
+        return false;
     }
 }

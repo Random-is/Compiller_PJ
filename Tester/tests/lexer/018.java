@@ -1,3 +1,3 @@
 ""
 EOF
-1	1	VAR_VALUE	""
+1	1	STRING	""	

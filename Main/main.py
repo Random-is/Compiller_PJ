@@ -3,7 +3,8 @@ from Lexer.tokenizer import Tokenizer
 from Lexer.types import TokenType, KeyWordType
 from Main.genastdot import AstVizGen
 from Parser.parser import Parser
-from Tester.tester import LexTester, ParsTester, ExprTester
+from Parser.semantic_analyzer import SemanticAnalyzer
+from Tester.tester import LexTester, ParsTester, ExprTester, SemanticsTester
 
 
 class Main:
@@ -13,11 +14,19 @@ class Main:
 
     @staticmethod
     def test_lexer():
-        LexTester().start_tests('../Tester/tests/lexer/', 10)
+        LexTester().start_tests('../Tester/tests/lexer/', 30)
 
     @staticmethod
     def test_expr():
         ExprTester().start_tests('../Tester/tests/expr/', 10)
+
+    @staticmethod
+    def test_semantic():
+        SemanticsTester().start_tests('../Tester/tests/semantic/', 5)
+
+    @staticmethod
+    def test_parser():
+        ParsTester().start_tests('../Tester/tests/parser/', 20)
 
     def calculate(self):
         tokenizer = Tokenizer(self.file)
@@ -31,6 +40,12 @@ class Main:
         tree = parser.parse()
         AstVizGen(tree).generate()
 
+    def check_semantic(self):
+        tokenizer = Tokenizer(self.file)
+        parser = Parser(tokenizer)
+        semantic = SemanticAnalyzer(parser, True)
+        semantic.analyze()
+
     def print_tokens(self):
         tokenizer = Tokenizer(self.file)
         while (token := tokenizer.next()).type != TokenType.EOF:
@@ -39,4 +54,4 @@ class Main:
 
 if __name__ == '__main__':
     # test_expr()
-    Main('test.java').print_ast()
+    Main('test.java').test_parser()
